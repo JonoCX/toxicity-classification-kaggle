@@ -4,7 +4,7 @@ import pandas as pd
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
-from keras.layers import LSTM, Bidirectional, Embedding, Dense
+from keras.layers import LSTM, Bidirectional, Embedding, Dense, Flattern, BatchNormalization
 
 train_data = pd.read_csv('../data/train.csv', usecols = ['id', 'target', 'comment_text'])
 test_data = pd.read_csv('../data/test.csv')
@@ -40,6 +40,13 @@ model = Sequential()
 model.add(Embedding(max_words, 128, input_length=max_sequence_length))
 model.add(Bidirectional(LSTM(128, dropout=0.2, recurrent_dropout=0.2, return_sequences=True)))
 model.add(Bidirectional(LSTM(64, dropout=0.2, recurrent_dropout=0.2, return_sequences=True)))
+
+model.add(Flattern())
+model.add(Dense(32, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(16, activation='relu'))
+model.add(BatchNormalization())
+
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
