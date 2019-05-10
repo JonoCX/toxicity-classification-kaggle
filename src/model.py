@@ -52,7 +52,7 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
 print(model.summary())
 
-history = model.fit(train_pad, train_y, epochs=10, batch_size=512, validation_split=0.25, verbose=2)
+history = model.fit(train_pad, train_y, epochs=10, batch_size=512, validation_split=0.25)
 
 test_pred = model.predict(pad_test)
 
