@@ -51,6 +51,6 @@ test_pred = model.predict(pad_test)
 
 sample_result = pd.DataFrame()
 sample_result['id'] = test_data.index 
-samepl_result['prediction'] = test_pred
+sample_result['prediction'] = test_pred
 
 sample_result.to_csv('../data/submission-1.csv', index=False)
