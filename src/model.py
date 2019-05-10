@@ -3,6 +3,8 @@ import pandas as pd
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
+from keras.models import Sequential
+from keras.layers import LSTM, Bidirectional, Embedding, Dense
 
 train_data = pd.read_csv('../data/train.csv', usecols = ['id', 'target', 'comment_text'])
 test_data = pd.read_csv('../data/test.csv')
@@ -34,6 +36,21 @@ sequences_test = tokenizer.texts_to_sequences(X_test)
 train_pad = pad_sequences(sequences_train, maxlen=max_sequence_length)
 test_pad = pad_sequences(sequences_test, maxlen=max_sequence_length)
 
-print(train_pad)
-print(train_pad.shape)
-print(test_pad.shape)
+model = Sequential()
+model.add(Embedding(max_words, 128, input_length=max_sequence_length))
+model.add(Bidirectional(LSTM(128, dropout=0.2, recurrent_dropout=0.2, return_sequences=True)))
+model.add(Bidirectional(LSTM(64, dropout=0.2, recurrent_dropout=0.2, return_sequences=True)))
+model.add(Dense(1, activation='sigmoid'))
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
+print(model.summary())
+
+history = model.fit(train_pad, train_y, epochs=10, batch_size=1024, validation_split=0.25, verbose=2)
+
+test_pred = model.predict(pad_test)
+
+sample_result = pd.DataFrame()
+sample_result['id'] = test_data.index 
+samepl_result['prediction'] = test_pred
+
+sample_result.to_csv('../data/submission-1.csv', index=False)
